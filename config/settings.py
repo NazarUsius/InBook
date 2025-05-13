@@ -32,6 +32,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+LOGIN_REDIRECT_URL = 'index'
+
 
 # Application definition
 
@@ -42,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -105,6 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
