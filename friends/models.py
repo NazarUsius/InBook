@@ -10,10 +10,3 @@ class Friends(models.Model):
     class Meta:
         unique_together = ('person_one', 'person_two')
 
-class FriendRequest(models.Model):
-    iniciator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='iniciator')
-    acceptor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='acceptor')
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('iniciator', 'acceptor')

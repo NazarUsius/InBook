@@ -22,4 +22,8 @@ def FriendsRequestAccept(request, iniciator:int):
     f_request.save()
     return redirect("friends_list")
 
+def FriendsRequestDecline(request, iniciator:int):
+    f_request = get_object_or_404(Friends, person_one=iniciator)
+    f_request.delete()
+    return redirect("friends_list")
 
