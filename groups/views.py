@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
 from .forms import GroupForm
 from .models import Group
@@ -23,6 +23,6 @@ def group_add(request):
             Group.objects.create(name=form.cleaned_data["name"], description=form.cleaned_data["description"])
             return redirect("group_list")
 
-    return render(request, "groups/add.htnl", {"form": form})
+    return render(request, "groups/add.html", {"form": form})
 
 
