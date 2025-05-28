@@ -35,3 +35,15 @@ def group_join(request, group_id: int):
         messages.success(request, f"You have successfully joined the group: {group.name}")
 
     return redirect("group_detail", group_id=group_id)
+
+
+def group_leave(request, group_id: int):
+    group = get_object_or_404(Group, pk=group_id)
+
+    if not group.is_member(request.user):
+        messages.info(request, "You are not a member of this group.")
+    else:
+        group.members.remove(request.user)
+        messages.success(request, f"You have successfully left the group: {group.name}")
+
+    return redirect("group_detail", group_id=group_id)
