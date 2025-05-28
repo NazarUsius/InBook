@@ -6,4 +6,5 @@ urlpatterns = [
     path('list', views.group_list, name='group_list'),
     path('detail/<int:group_id>', views.group_detail, name='group_detail'),
     path('add/', views.group_add, name='group_add'),
+    path('join/<int:group_id>', views.group_join, name='group_join'),
 ]

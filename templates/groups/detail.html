@@ -1,3 +1,19 @@
-name: {{ group.name }}
-description: {{ group.description }}
-members: {{ group.members }}
+<h1>{{ group.name }}</h1>
+<p><strong>Description:</strong> {{ group.description }}</p>
+
+<h2>Members</h2>
+<ul>
+{% for member in group.members.all %}
+    <li>{{ member.username }}</li>
+{% empty %}
+    <li>No members yet</li>
+{% endfor %}
+</ul>
+
+{% if user.is_authenticated %}
+    {% if user in group.members.all %}
+        <p>You are already a member of this group.</p>
+    {% else %}
+        <a href="{% url 'group_join' group.id %}" class="btn btn-primary">Join Group</a>
+    {% endif %}
+{% endif %}
