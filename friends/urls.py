@@ -4,9 +4,9 @@ from . import views
 
 urlpatterns = [
     path('list', views.friends_list, name='friends_list'),
-    path('request/<str:second>', views.friends_request, name='friends_request'),
-    path('accept/<str:iniciator>', views.friends_request_accept, name='friends_request_accept'),
-    path('decline/<str:iniciator>', views.friends_request_decline, name='friends_request_decline'),
+    path('request/<int:second>', views.friends_request, name='friends_request'),
+    path('accept/<int:iniciator>', views.friends_request_accept, name='friends_request_accept'),
+    path('decline/<int:iniciator>', views.friends_request_decline, name='friends_request_decline'),
     path('delete/<int:second>', views.friends_delete, name='friends_delete'),
 
 

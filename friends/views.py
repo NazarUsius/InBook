@@ -11,8 +11,8 @@ def friends_list(request):
     }
     return render(request, "friends/list.html", context)
 
-def friends_request(request, second: str):
-    secon = get_object_or_404(CustomUser, username=second)
+def friends_request(request, second: int):
+    secon = get_object_or_404(CustomUser, pk=second)
     Friends.objects.create(person_one=request.user, person_two=secon)
     return redirect("index")
 
@@ -27,7 +27,7 @@ def friends_request_decline(request, iniciator:int):
     f_request.delete()
     return redirect("friends_list")
 
-def friends_delete(request, second: id):
+def friends_delete(request, second: int):
     friend = get_object_or_404(Friends, person_two=second)
     friend.delete()
     return redirect("friends_list")
