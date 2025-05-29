@@ -16,6 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import TemplateView
+from django.conf import settings
+from django.views.static import serve as static_serve
+from django.urls import re_path
+from notifications.views import save_subscription, notify_users
 
 
 urlpatterns = [
@@ -25,4 +30,6 @@ urlpatterns = [
     path('profile/', include('profiles.urls')),
     path('groups/', include('groups.urls')),
     path('friends/', include('friends.urls')),
+    path("subscribe/", save_subscription, name="save_subscription"),
+    path("notify/", notify_users),
 ]
