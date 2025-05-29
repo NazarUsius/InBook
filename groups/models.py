@@ -13,9 +13,19 @@ class Group(models.Model):
 
     def __str__(self):
         return self.name
-    
+
     def is_member(self, user):
-        """Check if a user is a member of this group"""
         if not user.is_authenticated:
             return False
         return self.members.filter(id=user.id).exists()
+
+
+
+class GroupMessage(models.Model):
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.content}"

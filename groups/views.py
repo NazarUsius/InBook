@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 
 from .forms import GroupForm
-from .models import Group
+from .models import Group, GroupMessage
 
 
 def group_list(request):
@@ -46,4 +46,27 @@ def group_leave(request, group_id: int):
         group.members.remove(request.user)
         messages.success(request, f"You have successfully left the group: {group.name}")
 
+    return redirect("group_detail", group_id=group_id)
+
+def group_send_message(request, group_id: int):
+    group = get_object_or_404(Group, pk=group_id)
+    
+    # Check if user is a member of the group
+    if not group.is_member(request.user):
+        messages.error(request, "You must be a member of this group to send messages.")
+        return redirect("group_detail", group_id=group_id)
+    
+    if request.method == "POST":
+        content = request.POST.get("content")
+        if content:
+            # Create the message
+            GroupMessage.objects.create(
+                group=group,
+                user=request.user,
+                content=content
+            )
+            messages.success(request, "Message sent successfully!")
+        else:
+            messages.error(request, "Message cannot be empty.")
+    
     return redirect("group_detail", group_id=group_id)

@@ -10,9 +10,36 @@
 {% endfor %}
 </ul>
 
+<h2>Messages</h2>
+<div class="messages-container">
+    {% for message in group.groupmessage_set.all|dictsortreversed:"created_at" %}
+        <div class="message">
+            <div class="message-header">
+                <strong>{{ message.user.username }}</strong>
+                <small class="text-muted">{{ message.created_at|date:"M d, Y H:i" }}</small>
+            </div>
+            <div class="message-content">
+                {{ message.content }}
+            </div>
+        </div>
+        <hr>
+    {% empty %}
+        <p>No messages yet.</p>
+    {% endfor %}
+</div>
+
 {% if user.is_authenticated %}
     {% if user in group.members.all %}
         <p>You are already a member of this group.</p>
+        
+        <h3>Send Message</h3>
+        <form method="post" action="{% url 'group_send_message' group.id %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <textarea name="content" class="form-control" rows="3" placeholder="Enter your message"></textarea>
+            </div>
+            <button type="submit" class="btn btn-success">Send</button>
+        </form>
     {% else %}
         <a href="{% url 'group_join' group.id %}" class="btn btn-primary">Join Group</a>
     {% endif %}
