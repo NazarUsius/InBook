@@ -172,4 +172,11 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+<<<<<<< HEAD
 ./pyrightconfig.json
+=======
+
+./pyrightconfig.json
+
+*/migrations/*
+>>>>>>> f9c92bd (Update .gitignore)
