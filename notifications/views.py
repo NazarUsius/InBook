@@ -35,3 +35,4 @@ from .utils import send_push_notification
 def notify_users(request):
     send_push_notification("Привет!", "Это тестовое уведомление 🚀")
     return JsonResponse({"status": "ok"})
+
