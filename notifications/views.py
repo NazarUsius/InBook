@@ -33,6 +33,6 @@ from django.http import JsonResponse
 from .utils import send_push_notification
 
 def notify_users(request):
-    send_push_notification("Привет!", "Это тестовое уведомление 🚀")
+    send_push_notification("Привет!", "Сервис подключен, и готов к работе!")
     return JsonResponse({"status": "ok"})
 
