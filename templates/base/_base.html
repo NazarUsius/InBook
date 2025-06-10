@@ -1,0 +1,31 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>{% block title %}Мой сайт{% endblock %}</title>
+
+        <!-- Tailwind CSS через CDN -->
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        {% block head %}{% endblock %}
+    </head>
+    <body class="bg-gray-100 text-gray-900">
+        <header class="bg-white shadow-md p-4">
+            <div class="container mx-auto">
+                <h1 class="text-2xl font-bold">Мой сайт</h1>
+            </div>
+        </header>
+
+        <main class="container mx-auto mt-6 px-4">
+            {% block content %}
+            <!-- Контент страницы -->
+            {% endblock %}
+        </main>
+
+        {% block scripts %}
+        <script src="{% static 'js/push.js' %}"></script>
+        {% endblock %}
+    </body>
+</html>
