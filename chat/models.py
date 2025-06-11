@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 
 class Room(models.Model):
-    # Уникальное имя комнаты, например "chat_3_7"
+
     name = models.CharField(max_length=255, unique=True)
     participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='rooms')
 
@@ -14,7 +14,7 @@ class Room(models.Model):
 
     @staticmethod
     def get_room_name(user1_id, user2_id):
-        # Генерируем имя комнаты в формате chat_3_7 (сортируем id)
+
         ids = sorted([user1_id, user2_id])
         return f"chat_{ids[0]}_{ids[1]}"
 
