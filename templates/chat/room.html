@@ -1,0 +1,46 @@
+<div id="chat-log" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;"></div>
+<input id="chat-message-input" type="text" size="100">
+<button id="chat-message-submit">Send</button>
+
+<script>
+const roomName = "{{ room_name }}";  // передай из view
+const chatLog = document.getElementById('chat-log');
+const chatInput = document.getElementById('chat-message-input');
+const chatSubmit = document.getElementById('chat-message-submit');
+
+const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+const chatSocket = new WebSocket(
+    ws_scheme + '://' + window.location.host +
+    '/ws/chat/' + roomName + '/'
+);
+
+chatSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    if (data.type === 'history' || data.type === 'chat') {
+        const messageElem = document.createElement('div');
+        const time = new Date(data.timestamp).toLocaleTimeString();
+        messageElem.innerHTML = `<b>${data.user}</b> [${time}]: ${data.message}`;
+        chatLog.appendChild(messageElem);
+        chatLog.scrollTop = chatLog.scrollHeight;  // прокрутка вниз
+    }
+};
+
+chatSocket.onclose = function(e) {
+    console.error('Chat socket closed unexpectedly');
+};
+
+chatSubmit.onclick = function() {
+    const message = chatInput.value;
+    if (message.trim() === '') return;
+    chatSocket.send(JSON.stringify({
+        'message': message
+    }));
+    chatInput.value = '';
+};
+
+chatInput.addEventListener("keyup", function(event) {
+    if (event.key === "Enter") {
+        chatSubmit.click();
+    }
+});
+</script>

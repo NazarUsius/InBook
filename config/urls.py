@@ -30,6 +30,7 @@ urlpatterns = [
     path('profile/', include('profiles.urls')),
     path('groups/', include('groups.urls')),
     path('friends/', include('friends.urls')),
+    path('chat/', include('chat.urls')),
     path("subscribe/", save_subscription, name="save_subscription"),
     path("notify/", notify_users),
 ]

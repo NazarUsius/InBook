@@ -1,0 +1,24 @@
+<h1>Ваши чаты</h1>
+<ul>
+    {% for room in rooms %}
+        <li>
+            <a href="{% url 'chat:room_detail' room.name %}">
+                Чат с
+                {% for user in room.participants.all %}
+                    {% if user != request.user %}
+                        {{ user.username }}
+                    {% endif %}
+                {% endfor %}
+            </a>
+        </li>
+    {% empty %}
+        <li>У вас нет чатов</li>
+    {% endfor %}
+</ul>
+
+<h2>Начать новый чат</h2>
+<form method="GET" action="{% url 'chat:start_chat' 0 %}">
+    <label>Введите ID пользователя:</label>
+    <input type="number" name="user_id" id="user_id" min="1" required>
+    <button type="submit" onclick="event.preventDefault(); location.href='/chat/start/' + document.getElementById('user_id').value + '/';">Начать чат</button>
+</form>
