@@ -33,4 +33,5 @@ urlpatterns = [
     path('chat/', include('chat.urls')),
     path("subscribe/", save_subscription, name="save_subscription"),
     path("notify/", notify_users),
+    path('community/', include('community.urls')),
 ]

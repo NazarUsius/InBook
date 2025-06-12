@@ -5,6 +5,7 @@ class Community(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField()
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='members', blank=True)
+    admins = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='admins', blank=True)
 
     def __str__(self):
         return self.name
