@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from community.models import Community, Post
+
+admin.site.register(Community)
+admin.site.register(Post)
+
