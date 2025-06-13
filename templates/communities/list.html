@@ -1,0 +1,15 @@
+<h1>Все сообщества</h1>
+
+<a href="{% url 'community_create' %}">Создать новое сообщество</a>
+<hr>
+
+<ul>
+  {% for community in communities %}
+    <li>
+      <a href="{% url 'community_detail' community.pk %}">{{ community.name }}</a>
+      — {{ community.members.count }} участников
+    </li>
+  {% empty %}
+    <li>Нет сообществ</li>
+  {% endfor %}
+</ul>

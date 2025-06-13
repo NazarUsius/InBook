@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'friends',
     'notifications',
     'chat',
-    'channels'
+    'channels',
+    'community'
 ]
 
 MIDDLEWARE = [

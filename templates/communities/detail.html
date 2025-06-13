@@ -1,0 +1,48 @@
+<h1>{{ community.name }}</h1>
+<p>{{ community.description }}</p>
+
+<p><strong>Администраторы:</strong></p>
+<ul>
+  {% for admin in community.admins.all %}
+    <li>{{ admin.username }}</li>
+  {% endfor %}
+</ul>
+
+<p><strong>Участников:</strong> {{ community.members.count }}</p>
+
+{% if user.is_authenticated %}
+  {% if is_member %}
+    <form method="post" action="{% url 'community_leave' community.pk %}">
+      {% csrf_token %}
+      <button type="submit">Покинуть сообщество</button>
+    </form>
+  {% else %}
+    <form method="post" action="{% url 'community_join' community.pk %}">
+      {% csrf_token %}
+      <button type="submit">Присоединиться</button>
+    </form>
+  {% endif %}
+{% endif %}
+
+{% if is_admin %}
+  <hr>
+  <p>
+    <a href="{% url 'community_edit' community.pk %}">Редактировать</a> |
+    <a href="{% url 'community_delete' community.pk %}">Удалить</a>
+  </p>
+{% endif %}
+
+<hr>
+
+<h2>Посты сообщества</h2>
+{% if posts %}
+  <ul>
+    {% for post in posts %}
+      <li><strong>{{ post.title }}</strong> — {{ post.author.username }}</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Пока нет постов.</p>
+{% endif %}
+
+<a href="{% url 'communities_list' %}">← Назад к списку</a>

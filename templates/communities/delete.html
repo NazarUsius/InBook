@@ -1,0 +1,9 @@
+<h1>Удалить сообщество: "{{ community.name }}"?</h1>
+
+<p>Это действие необратимо. Все данные, связанные с сообществом, будут удалены.</p>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Да, удалить</button>
+  <a href="{% url 'community_detail' community.pk %}">Отмена</a>
+</form>
