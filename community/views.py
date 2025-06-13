@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 
-from .forms import CommunityForm
+from .forms import CommunityForm, CommentForm
 from .models import Community, Post
 
 
@@ -18,11 +18,10 @@ def community_create(request):
     if request.method == "POST":
         form = CommunityForm(request.POST)
         if form.is_valid():
-            form.save()
-            name = form.cleaned_data['name']
-            description = form.cleaned_data['description']
-            admin = request.user
-            Community.objects.create(name=name, description=description, admins=admin)
+            community = form.save(commit=False)
+            community.save()
+            community.admins.add(request.user)
+            return redirect('communities_list')
 
     return render(request, "communities/create.html", {"form": form})
 
@@ -38,14 +37,8 @@ def community_edit(request, pk):
     if request.method == "POST":
         form = CommunityForm(request.POST, instance=community)
         if form.is_valid():
-            old = form.save()
-            name = form.cleaned_data['name']
-            description = form.cleaned_data['description']
-            old.name = name
-            old.description = description
-            old.save()
-            return redirect("index")
-
+            form.save()
+            return redirect("communities_list")
         else:
             form = CommunityForm(instance=community)
     return render(request, "communities/edit.html", {"form": form})
@@ -67,31 +60,75 @@ def community_delete(request, pk):
 @login_required
 def community_join(request, pk):
     community = get_object_or_404(Community, pk=pk)
-    community.members.add(request.user)
-    community.save()
+    if request.user not in community.members.all():
+        community.members.add(request.user)
     return redirect("communities_list")
 
 
 @login_required
 def community_leave(request, pk):
     community = get_object_or_404(Community, pk=pk)
-    community.members.remove(request.user)
-    community.save()
+    if request.user not in community.members.all():
+        community.members.remove(request.user)
     return redirect("communities_list")
 
 @login_required
 def community_detail(request, pk):
     community = get_object_or_404(Community, pk=pk)
-    is_member = request.user.is_authenticated and request.user in community.members.all()
-    is_admin = request.user.is_authenticated and request.user in community.admins.all()
-    posts = Post.objects.filter(community=community)
+    is_member = request.user in community.members.all()
+    is_admin = request.user in community.admins.all()
+    posts = Post.objects.filter(community=community).prefetch_related('comments')
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        post_id = request.POST.get('post_id')
+        post = get_object_or_404(Post, id=post_id)
+
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.author = request.user
+            comment.post = post
+            comment.save()
+            return redirect('community_detail', pk=community.pk)
+    else:
+        form = CommentForm()
 
     return render(request, "communities/detail.html", {
         "community": community,
         "is_member": is_member,
         "is_admin": is_admin,
         "posts": posts,
+        "comment_form": form,
     })
+
+
+@login_required
+def post_like(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    user = request.user
+
+    if user in post.likes.all():
+        post.likes.remove(user)
+    else:
+        post.dislikes.remove(user)
+        post.likes.add(user)
+
+    return redirect('community_detail', pk=post.community.pk)
+
+
+
+@login_required
+def post_dislike(request,  post_id):
+    post = get_object_or_404(Post, id=post_id)
+    user = request.user
+
+    if user in post.dislikes.all():
+        post.dislikes.remove(user)
+    else:
+        post.likes.remove(user)
+        post.dislikes.add(user)
+    return redirect('community_detail', pk=post.community.pk)
+
 
 
 

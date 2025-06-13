@@ -5,3 +5,4 @@ from community.models import Community, Post
 admin.site.register(Community)
 admin.site.register(Post)
 
+
