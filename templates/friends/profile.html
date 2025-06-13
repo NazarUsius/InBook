@@ -1,0 +1,27 @@
+{% extends "base/_base.html" %}
+{% block content %}
+<h1>Профіль {{ profile_user.username }}</h1>
+
+<p><strong>Електронна пошта:</strong> {{ profile_user.email }}</p>
+<p><strong>Стать:</strong> {{ profile_user.gender }}</p>
+<p><strong>Дата народження:</strong> {{ profile_user.birth_date }}</p>
+
+<p><strong>Друзів:</strong> {{ friends_count }}</p>
+<p><strong>Підписників:</strong> {{ followers_count }}</p>
+<p><strong>Підписок:</strong> {{ following_count }}</p>
+
+{% if user.is_authenticated and user != profile_user %}
+  {% if profile_user.id in user_subscriptions %}
+    <form method="post" action="{% url 'unsubscribe' profile_user.id %}">
+      {% csrf_token %}
+      <button type="submit">Відписатися</button>
+    </form>
+  {% else %}
+    <form method="post" action="{% url 'subscribe' profile_user.id %}">
+      {% csrf_token %}
+      <button type="submit">Підписатися</button>
+    </form>
+  {% endif %}
+{% endif %}
+
+{% endblock %}
