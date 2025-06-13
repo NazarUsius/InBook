@@ -1,25 +1,28 @@
+{% extends "base/_base.html" %}
+
+{% block content %}
 <h1>{{ community.name }}</h1>
 <p>{{ community.description }}</p>
 
-<p><strong>Администраторы:</strong></p>
+<p><strong>Адміністратори:</strong></p>
 <ul>
   {% for admin in community.admins.all %}
     <li>{{ admin.username }}</li>
   {% endfor %}
 </ul>
 
-<p><strong>Участников:</strong> {{ community.members.count }}</p>
+<p><strong>Учасників:</strong> {{ community.members.count }}</p>
 
 {% if user.is_authenticated %}
   {% if is_member %}
     <form method="post" action="{% url 'community_leave' community.pk %}">
       {% csrf_token %}
-      <button type="submit">Покинуть сообщество</button>
+      <button type="submit">Покинути спільноту</button>
     </form>
   {% else %}
     <form method="post" action="{% url 'community_join' community.pk %}">
       {% csrf_token %}
-      <button type="submit">Присоединиться</button>
+      <button type="submit">Приєднатися до спільноти</button>
     </form>
   {% endif %}
 {% endif %}
@@ -27,22 +30,68 @@
 {% if is_admin %}
   <hr>
   <p>
-    <a href="{% url 'community_edit' community.pk %}">Редактировать</a> |
-    <a href="{% url 'community_delete' community.pk %}">Удалить</a>
+    <a href="{% url 'community_edit' community.pk %}">Редагувати</a> |
+    <a href="{% url 'community_delete' community.pk %}">Видалити</a>
   </p>
 {% endif %}
 
 <hr>
 
-<h2>Посты сообщества</h2>
+<h2>Пости спільноти</h2>
+
 {% if posts %}
-  <ul>
-    {% for post in posts %}
-      <li><strong>{{ post.title }}</strong> — {{ post.author.username }}</li>
-    {% endfor %}
-  </ul>
+  {% for post in posts %}
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5>{{ post.title }}</h5>
+        <p>{{ post.content }}</p>
+        <small>Автор: {{ post.author.username }} | {{ post.created_at|date:"d.m.Y H:i" }}</small>
+
+        <hr>
+
+        <div>
+          <strong>{{ post.title }}</strong> — {{ post.author.username }} <br>
+
+          <form method="post" action="{% url 'post_like' post.id %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm {% if user in post.likes.all %}btn-success{% else %}btn-outline-success{% endif %}">
+              👍 {{ post.likes.count }}
+            </button>
+          </form>
+
+          <form method="post" action="{% url 'post_dislike' post.id %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm {% if user in post.dislikes.all %}btn-danger{% else %}btn-outline-danger{% endif %}">
+              👎 {{ post.dislikes.count }}
+            </button>
+          </form>
+        </div>
+
+        <hr>
+        <h6>Коментарі:</h6>
+        {% for comment in post.comments.all %}
+          <div class="mb-2">
+            <strong>{{ comment.author.username }}</strong>: {{ comment.content }}
+            <small class="text-muted">({{ comment.created_at|date:"SHORT_DATETIME_FORMAT" }})</small>
+          </div>
+        {% empty %}
+          <p class="text-muted">Коментарів ще немає.</p>
+        {% endfor %}
+
+        {% if is_member %}
+          <form method="post" class="mt-2">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <input type="hidden" name="post_id" value="{{ post.id }}">
+            <button type="submit" class="btn btn-primary btn-sm">Додати коментар</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
 {% else %}
-  <p>Пока нет постов.</p>
+  <p>Поки немає постів.</p>
 {% endif %}
 
-<a href="{% url 'communities_list' %}">← Назад к списку</a>
+<a href="{% url 'communities_list' %}">← Назад до списку</a>
+{% endblock %}

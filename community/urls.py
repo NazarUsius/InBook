@@ -9,5 +9,6 @@ urlpatterns = [
     path('detail/<int:pk>', views.community_detail, name='community_detail'),
     path('join/<int:pk>', views.community_join, name='community_join'),
     path('leave/<int:pk>', views.community_leave, name='community_leave'),
-
+    path('like/<int:post_id>', views.post_like, name='post_like'),
+    path('dislike/<int:post_id>', views.post_dislike, name='post_dislike'),
 ]
