@@ -1,3 +1,44 @@
-{% for friend in friends %}
-    {{ friend.person_two.username }}
-{% endfor %}
+{% extends "base/_base.html" %}
+{% block content %}
+<h2>Мої друзі</h2>
+
+{% if friends %}
+  <ul>
+    {% for friendship in friends %}
+      {% if friendship.person_one == user %}
+        <li>{{ friendship.person_two.username }}
+          <a href="{% url 'friends_delete' friendship.person_two.id %}">Видалити</a>
+        </li>
+      {% else %}
+        <li>{{ friendship.person_one.username }}
+          <a href="{% url 'friends_delete' friendship.person_one.id %}">Видалити</a>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>У вас поки що немає друзів.</p>
+{% endif %}
+
+<h2>Вхідні запити на дружбу</h2>
+<ul>
+  {% for req in user.received_friend_requests.filter(accepted=False) %}
+    <li>{{ req.from_user.username }}
+      <a href="{% url 'friends_request_accept' req.from_user.id %}">Прийняти</a>
+      <a href="{% url 'friends_request_decline' req.from_user.id %}">Відхилити</a>
+    </li>
+  {% empty %}
+    <li>Немає вхідних запитів</li>
+  {% endfor %}
+</ul>
+
+<h2>Відправлені запити</h2>
+<ul>
+  {% for req in user.sent_friend_requests.filter(accepted=False) %}
+    <li>{{ req.to_user.username }} (очікує підтвердження)</li>
+  {% empty %}
+    <li>Ви не надсилали запитів</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

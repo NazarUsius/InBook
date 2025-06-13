@@ -10,3 +10,12 @@ class Friends(models.Model):
     class Meta:
         unique_together = ('person_one', 'person_two')
 
+
+class Subscription(models.Model):
+    follower = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='subscriptions', on_delete=models.CASCADE)
+    following = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='followers', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('follower', 'following')
+

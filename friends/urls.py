@@ -8,6 +8,7 @@ urlpatterns = [
     path('accept/<int:iniciator>', views.friends_request_accept, name='friends_request_accept'),
     path('decline/<int:iniciator>', views.friends_request_decline, name='friends_request_decline'),
     path('delete/<int:second>', views.friends_delete, name='friends_delete'),
+    path('profile/<int:user_id>', views.profile, name='profile'),
 
 
 ]
