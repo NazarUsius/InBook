@@ -1,13 +1,31 @@
+{% extends "base/_base.html" %}
 {% load static %}
-<!doctype html>
-<html lang="ru">
-    <head>
+
+{% block head %}
         <meta charset="UTF-8" />
         <title>Мой сайт</title>
-    </head>
-    <body>
-        <button id="subscribe-btn">Подписаться</button>
-        <script>
+        <script src="{% static 'js/main.js' %}"></script>
+{% endblock %}
+
+        {% block content %}
+        <h1>Останні пости з ваших спільнот</h1>
+
+        {% if posts %}
+          <ul>
+            {% for post in posts %}
+              <li class="mb-4">
+                <strong>{{ post.community.name }}</strong><br>
+                {{ post.content }}<br>
+                <small>Автор: {{ post.community }} | {{ post.created_at|date:"d.m.Y H:i" }}</small>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>Немає постів. Приєднайтесь до спільнот, щоб бачити оновлення.</p>
+        {% endif %}
+
+            <button id="subscribe-btn">Подписаться</button>
+            <script>
             document
                 .getElementById("subscribe-btn")
                 .addEventListener("click", () => {
@@ -22,7 +40,6 @@
                 });
         </script>
 
-        <!-- Подключаем скрипт -->
-        <script src="{% static 'js/main.js' %}"></script>
-    </body>
+
+        {% endblock %}
 </html>

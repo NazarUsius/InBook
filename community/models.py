@@ -1,10 +1,12 @@
+from datetime import timezone
+
 from django.db import models
 from django.conf import settings
 
 class Community(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField()
-    members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='members', blank=True)
+    members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='communities', blank=True)
     admins = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='admins', blank=True)
 
     def __str__(self):
@@ -19,6 +21,7 @@ class Post(models.Model):
     community = models.ForeignKey(Community, on_delete=models.CASCADE)
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_posts', blank=True)
     dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='disliked_posts', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def total_likes(self):
         return self.likes.count()

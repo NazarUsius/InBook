@@ -20,7 +20,7 @@ def save_subscription(request):
             auth = data["keys"]["auth"]
 
             # Сохраняем в БД
-            WebPushSubscription.objects.create(endpoint=endpoint, p256dh=p256dh, auth=auth)
+            WebPushSubscription.objects.create(user=request.user, endpoint=endpoint, p256dh=p256dh, auth=auth)
 
             return JsonResponse({"status": "ok"})
         except (KeyError, json.JSONDecodeError) as e:
@@ -33,6 +33,9 @@ from django.http import JsonResponse
 from .utils import send_push_notification
 
 def notify_users(request):
-    send_push_notification("Привет!", "Сервис подключен, и готов к работе!")
+    send_push_notification(
+        request.user,
+        "Привет!",
+        "Сервис подключен, и готов к работе!")
     return JsonResponse({"status": "ok"})
 

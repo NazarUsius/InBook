@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.db.models import Q
 from .models import Friends, Subscription
 from django.contrib.auth import get_user_model
+from notifications.utils import send_push_notification
 
 User = get_user_model()
 
@@ -26,7 +27,6 @@ def friends_request(request, second: int):
 
     secon = get_object_or_404(User, pk=second)
 
-    # Проверяем, есть ли уже запрос или дружба между пользователями в любом направлении
     exists = Friends.objects.filter(
         (Q(person_one=request.user) & Q(person_two=secon)) |
         (Q(person_one=secon) & Q(person_two=request.user))
@@ -37,6 +37,11 @@ def friends_request(request, second: int):
         return redirect("index")
 
     Friends.objects.create(person_one=request.user, person_two=secon)
+    send_push_notification(
+        secon,
+        "Запрос на дружбу",
+        f"{request.user.username} відправив(ла) вам запрос на дружбу"
+    )
     messages.success(request, "Запит на дружбу надіслано.")
     return redirect("index")
 
