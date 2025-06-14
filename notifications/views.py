@@ -20,7 +20,7 @@ def save_subscription(request):
             auth = data["keys"]["auth"]
 
             # Сохраняем в БД
-            WebPushSubscription.objects.create(endpoint=endpoint, p256dh=p256dh, auth=auth)
+            WebPushSubscription.objects.create(user=request.user, endpoint=endpoint, p256dh=p256dh, auth=auth)
 
             return JsonResponse({"status": "ok"})
         except (KeyError, json.JSONDecodeError) as e:

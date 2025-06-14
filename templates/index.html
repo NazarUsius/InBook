@@ -1,27 +1,11 @@
 {% extends "base/_base.html" %}
 {% load static %}
-<!doctype html>
-<html lang="ru">
-    <head>
+
+{% block head %}
         <meta charset="UTF-8" />
         <title>Мой сайт</title>
-    </head>
-    <body>
-        <button id="subscribe-btn">Подписаться</button>
-        <script>
-            document
-                .getElementById("subscribe-btn")
-                .addEventListener("click", () => {
-                    Notification.requestPermission().then((result) => {
-                        if (result === "granted") {
-                            console.log("Разрешение получено");
-                            // здесь можно подписываться на пуши
-                        } else {
-                            console.log("Разрешение отклонено");
-                        }
-                    });
-                });
-        </script>
+        <script src="{% static 'js/main.js' %}"></script>
+{% endblock %}
 
         {% block content %}
         <h1>Останні пости з ваших спільнот</h1>
@@ -40,9 +24,22 @@
           <p>Немає постів. Приєднайтесь до спільнот, щоб бачити оновлення.</p>
         {% endif %}
 
-        {% endblock %}
+            <button id="subscribe-btn">Подписаться</button>
+            <script>
+            document
+                .getElementById("subscribe-btn")
+                .addEventListener("click", () => {
+                    Notification.requestPermission().then((result) => {
+                        if (result === "granted") {
+                            console.log("Разрешение получено");
+                            // здесь можно подписываться на пуши
+                        } else {
+                            console.log("Разрешение отклонено");
+                        }
+                    });
+                });
+        </script>
 
-        <!-- Подключаем скрипт -->
-        <script src="{% static 'js/main.js' %}"></script>
-    </body>
+
+        {% endblock %}
 </html>

@@ -1,41 +1,31 @@
 from pywebpush import webpush, WebPushException
-from notifications.models import WebPushSubscription  # или путь к твоей модели
+from notifications.models import WebPushSubscription
+from django.conf import settings
 import json
 
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
+def send_push_notification(user, title, body):
+    subscription = WebPushSubscription.objects.filter(user=user).first()
+    if not subscription:
+        return
 
-
-VAPID_PRIVATE_KEY = os.getenv("VAPID_PRIVATE_KEY")
-VAPID_PUBLIC_KEY = os.getenv("VAPID_PUBLIC_KEY")
-VAPID_CLAIMS = {
-    "sub": "mailto:nazar.gadzhalov@gmail.com"  # замени на свою почту
-}
-
-def send_push_notification(title, body):
     payload = {
         "title": title,
-        "body": body
+        "body": body,
     }
 
-    subscriptions = WebPushSubscription.objects.all()
-
-    for sub in subscriptions:
-        try:
-            webpush(
-                subscription_info={
-                    "endpoint": sub.endpoint,
-                    "keys": {
-                        "p256dh": sub.p256dh,
-                        "auth": sub.auth,
-                    }
-                },
-                data=json.dumps(payload),
-                vapid_private_key=VAPID_PRIVATE_KEY,
-                vapid_claims=VAPID_CLAIMS
-            )
-            print("Уведомление отправлено:", sub.endpoint)
-        except WebPushException as ex:
-            print("Ошибка отправки:", repr(ex))
+    try:
+        webpush(
+            subscription_info={
+                "endpoint": subscription.endpoint,
+                "keys": {
+                    "p256dh": subscription.p256dh,
+                    "auth": subscription.auth
+                }
+            },
+            data=json.dumps(payload),
+            vapid_private_key=settings.VAPID_PRIVATE_KEY,
+            vapid_claims=settings.VAPID_CLAIMS
+        )
+    except WebPushException as ex:
+        print("Web push failed: ", repr(ex))
