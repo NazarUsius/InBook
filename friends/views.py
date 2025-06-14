@@ -38,7 +38,7 @@ def friends_request(request, second: int):
 
     Friends.objects.create(person_one=request.user, person_two=secon)
     send_push_notification(
-        request.user,
+        secon,
         "Запрос на дружбу",
         f"{request.user.username} відправив(ла) вам запрос на дружбу"
     )

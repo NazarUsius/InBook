@@ -29,9 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 VAPID_PUBLIC_KEY = os.getenv("VAPID_PUBLIC_KEY")
 VAPID_PRIVATE_KEY = os.getenv("VAPID_PRIVATE_KEY")
-VAPID_CLAIMS = {
-    "sub": "mailto:nazar.gadzhalov@gmail.com"
-}
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

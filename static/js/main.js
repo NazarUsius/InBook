@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(
-          "BMxGdJwlfvmnAEUrj1TvGXJZ1Lk1-RsUYJwPLrw99ciGnnqkCJTmd3A57bPamAhkUyXJEj58EiCQdPRYfXhUjmI",
+          "BH032alQmiGOOavyoVinw2RxELcnbjVVSeSuHF3ZXbjMJnX41Lbe0W78NbqVUmpj7Pmw8ygCtGIix5DpByVNjF8",
         ),
       });
 
