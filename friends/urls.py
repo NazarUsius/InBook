@@ -9,6 +9,8 @@ urlpatterns = [
     path('decline/<int:iniciator>', views.friends_request_decline, name='friends_request_decline'),
     path('delete/<int:second>', views.friends_delete, name='friends_delete'),
     path('profile/<int:user_id>', views.profile, name='profile'),
+    path('subscribe/<int:user_id>', views.subscribe, name='subscribe'),
+    path('unsubscribe/<int:user_id>', views.unsubscribe, name='unsubscribe'),
 
 
 ]

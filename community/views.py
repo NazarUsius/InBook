@@ -1,15 +1,22 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
+import re
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils.safestring import mark_safe
 
+from notifications.utils import send_push_notification
 from .forms import CommunityForm, CommentForm
-from .models import Community, Post
+from .models import Community, Post, Comment
 
+User = get_user_model()
 
 @login_required
 def communities_list(request):
-    Communities = Community.objects.all()
-    return render(request, "communities/list.html" ,{"communities": Communities})
+    communities = Community.objects.all()
+    return render(request, "communities/list.html" ,{"communities": communities})
 
 @login_required
 def community_create(request):
@@ -128,6 +135,33 @@ def post_dislike(request,  post_id):
         post.likes.remove(user)
         post.dislikes.add(user)
     return redirect('community_detail', pk=post.community.pk)
+
+
+def extract_mentions(text):
+    print(text)
+    mention = re.findall(r'@(\w+)', text)
+    print(mention)
+    return User.objects.filter(username__in=mention)
+
+@receiver(post_save, sender=Comment)
+def notify_mentions(sender, instance, created, **kwargs):
+    if created:
+        mentioned = extract_mentions(instance.content)
+        print(mentioned)
+        for user in mentioned:
+            send_push_notification(
+                user,
+                "Вас упомянули!",
+                f"Вас упомянул {user.username}, в комментарии"
+            )
+
+def render_mentions(text):
+    def replace(match):
+        username = match.group(1)
+        return f'<a href="/profile/{username}/">@{username}</a>'
+    return mark_safe(re.sub(r'@(\w+)', replace, text))
+
+
 
 
 
