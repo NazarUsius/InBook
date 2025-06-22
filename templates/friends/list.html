@@ -22,10 +22,10 @@
 
 <h2>Вхідні запити на дружбу</h2>
 <ul>
-  {% for req in user.received_friend_requests.filter(accepted=False) %}
-    <li>{{ req.from_user.username }}
-      <a href="{% url 'friends_request_accept' req.from_user.id %}">Прийняти</a>
-      <a href="{% url 'friends_request_decline' req.from_user.id %}">Відхилити</a>
+  {% for req in requests %}
+    <li>{{ req.person_one.username }}
+      <a href="{% url 'friends_request_accept' req.person_one.id %}">Прийняти</a>
+      <a href="{% url 'friends_request_decline' req.person_one.id %}">Відхилити</a>
     </li>
   {% empty %}
     <li>Немає вхідних запитів</li>
@@ -34,8 +34,8 @@
 
 <h2>Відправлені запити</h2>
 <ul>
-  {% for req in user.sent_friend_requests.filter(accepted=False) %}
-    <li>{{ req.to_user.username }} (очікує підтвердження)</li>
+  {% for req in requests %}
+    <li>{{ req.person_two.username }} (очікує підтвердження)</li>
   {% empty %}
     <li>Ви не надсилали запитів</li>
   {% endfor %}

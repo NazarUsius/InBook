@@ -7,7 +7,7 @@ class CommunityForm(forms.ModelForm):
 
     class Meta:
         model = Community
-        fields = '__all__'
+        fields = ['name', 'description']
 
 
 

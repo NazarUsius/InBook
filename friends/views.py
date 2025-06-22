@@ -5,17 +5,25 @@ from django.db.models import Q
 from .models import Friends, Subscription
 from django.contrib.auth import get_user_model
 from notifications.utils import send_push_notification
+from chat.views import start_chat
 
 User = get_user_model()
 
 @login_required
 def friends_list(request):
-    # Получаем все друзья где пользователь - person_one или person_two и accepted=True
+
     friends = Friends.objects.filter(
         Q(person_one=request.user) | Q(person_two=request.user),
         accepted=True
     )
-    context = {'friends': friends}
+    requests = Friends.objects.filter(
+        Q(person_one=request.user) | Q(person_two=request.user),
+        accepted=False
+    )
+    context = {
+        'friends': friends,
+        'requests': requests,
+    }
     return render(request, "friends/list.html", context)
 
 
@@ -48,19 +56,30 @@ def friends_request(request, second: int):
 
 @login_required
 def friends_request_accept(request, initiator: int):
-    # Поиск запроса на дружбу где инициатор отправил запрос текущему пользователю
-    f_request = get_object_or_404(Friends, person_one_id=initiator, person_two=request.user, accepted=False)
+    sender = get_object_or_404(User, pk=initiator)
+    f_request = get_object_or_404(Friends, person_one=initiator, person_two=request.user, accepted=False)
     f_request.accepted = True
     f_request.save()
-    messages.success(request, "Запит на дружбу прийнято.")
+    start_chat(request, initiator)
+
+    send_push_notification(
+        sender,
+        "Запит на дружбу",
+        f"{request.user.username} прийняв(ла) ваш запит на дружбу!"
+    )
     return redirect("friends_list")
 
 
 @login_required
 def friends_request_decline(request, initiator: int):
+    sender = get_object_or_404(User, pk=initiator)
     f_request = get_object_or_404(Friends, person_one_id=initiator, person_two=request.user, accepted=False)
     f_request.delete()
-    messages.success(request, "Запит на дружбу відхилено.")
+    send_push_notification(
+        sender,
+        "Запит на дружбу",
+        f"{request.user.username} відхилив(ла) ваш запит на дружбу!"
+    )
     return redirect("friends_list")
 
 
@@ -71,10 +90,15 @@ def friends_delete(request, second: int):
         (Q(person_one_id=second) & Q(person_two=request.user)),
         accepted=True
     ).first()
+    sender = get_object_or_404(User, pk=second)
 
     if friend:
         friend.delete()
-        messages.success(request, "Друг видалений.")
+        send_push_notification(
+            sender,
+            "Запит на дружбу",
+            f"{request.user.username} Видалив(ла) вашу дружбу!"
+        )
     else:
         messages.error(request, "Друг не знайдений.")
     return redirect("friends_list")
@@ -93,7 +117,11 @@ def subscribe(request, user_id):
         following=user_to_follow
     )
     if created:
-        messages.success(request, "Ви підписалися на користувача.")
+        send_push_notification(
+            user_to_follow,
+            "Підписка",
+            f"На вас підписався коричтувач - {request.user.username}"
+        )
     else:
         messages.info(request, "Ви вже підписані на цього користувача.")
     return redirect('profile', user_id=user_id)
