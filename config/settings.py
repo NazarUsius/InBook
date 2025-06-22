@@ -34,7 +34,7 @@ VAPID_PRIVATE_KEY = os.getenv("VAPID_PRIVATE_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG") == "True"
 
-ALLOWED_HOSTS = ['.onrender.com']
+ALLOWED_HOSTS = ['.onrender.com', "inbook2.pythonanywhere.com"]
 
 LOGIN_REDIRECT_URL = 'index'
 
