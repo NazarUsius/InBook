@@ -1,9 +1,25 @@
-<div id="chat-log" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;"></div>
-<input id="chat-message-input" type="text" size="100">
-<button id="chat-message-submit">Send</button>
+{% extends "base/_base.html" %}
+{% block title %}Чат — {{ room_name }}{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto flex flex-col h-[600px]">
+    <h2 class="text-3xl font-semibold mb-4 text-stone-100">Чат: <span class="text-indigo-400">{{ room_name }}</span></h2>
 
+    <div id="chat-log" class="flex-grow overflow-y-auto border border-stone-700 rounded-md p-4 bg-stone-800 text-stone-100"></div>
+
+    <input id="chat-message-input" type="text" size="100" placeholder="Введите сообщение..." autocomplete="off"
+        class="mt-4 rounded-md px-4 py-2 border border-stone-700 bg-stone-900 text-stone-200
+               focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" />
+    <button id="chat-message-submit" type="button"
+        class="mt-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md font-semibold transition">
+        Отправить
+    </button>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
 <script>
-const roomName = "{{ room_name }}";  // передай из view
+const roomName = "{{ room_name }}";
 const chatLog = document.getElementById('chat-log');
 const chatInput = document.getElementById('chat-message-input');
 const chatSubmit = document.getElementById('chat-message-submit');
@@ -18,10 +34,22 @@ chatSocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
     if (data.type === 'history' || data.type === 'chat') {
         const messageElem = document.createElement('div');
-        const time = new Date(data.timestamp).toLocaleTimeString();
+        // Проверяем валидность timestamp
+        let time;
+        if (data.timestamp) {
+            const dateObj = new Date(data.timestamp);
+            // Проверяем, действительно ли дата валидна
+            if (isNaN(dateObj.getTime())) {
+                time = "н/д"; // не доступно
+            } else {
+                time = dateObj.toLocaleTimeString();
+            }
+        } else {
+            time = "н/д";
+        }
         messageElem.innerHTML = `<b>${data.user}</b> [${time}]: ${data.message}`;
         chatLog.appendChild(messageElem);
-        chatLog.scrollTop = chatLog.scrollHeight;  // прокрутка вниз
+        chatLog.scrollTop = chatLog.scrollHeight;
     }
 };
 
@@ -29,18 +57,23 @@ chatSocket.onclose = function(e) {
     console.error('Chat socket closed unexpectedly');
 };
 
-chatSubmit.onclick = function() {
-    const message = chatInput.value;
-    if (message.trim() === '') return;
-    chatSocket.send(JSON.stringify({
-        'message': message
-    }));
-    chatInput.value = '';
-};
+function sendMessage() {
+    const message = chatInput.value.trim();
+    if (!message) return;
+    if (chatSocket.readyState === WebSocket.OPEN) {
+        chatSocket.send(JSON.stringify({'message': message}));
+        chatInput.value = '';
+    } else {
+        alert("Соединение с сервером чата не установлено.");
+    }
+}
 
-chatInput.addEventListener("keyup", function(event) {
-    if (event.key === "Enter") {
-        chatSubmit.click();
+chatSubmit.addEventListener('click', sendMessage);
+
+chatInput.addEventListener('keyup', function(event) {
+    if (event.key === 'Enter') {
+        sendMessage();
     }
 });
 </script>
+{% endblock %}

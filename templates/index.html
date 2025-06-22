@@ -2,29 +2,41 @@
 {% load static %}
 
 {% block head %}
-        <meta charset="UTF-8" />
-        <title>Мой сайт</title>
-        <script src="{% static 'js/main.js' %}"></script>
+    <meta charset="UTF-8" />
+    <title>Мой сайт</title>
+    <script src="{% static 'js/main.js' %}"></script>
 {% endblock %}
 
-        {% block content %}
-        <h1>Останні пости з ваших спільнот</h1>
+{% block content %}
+<div class="max-w-3xl mx-auto p-6 min-h-screen text-white">
+    <h1 class="text-3xl font-bold mb-6 text-left">Останні пости з ваших спільнот</h1>
 
-        {% if posts %}
-          <ul>
-            {% for post in posts %}
-              <li class="mb-4">
-                <strong>{{ post.community.name }}</strong><br>
-                {{ post.content }}<br>
-                <small>Автор: {{ post.community }} | {{ post.created_at|date:"d.m.Y H:i" }}</small>
-              </li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p>Немає постів. Приєднайтесь до спільнот, щоб бачити оновлення.</p>
-        {% endif %}
+    {% if posts %}
+      <ul class="space-y-6">
+        {% for post in posts %}
+          <li class="bg-neutral-900 rounded-xl shadow p-4 text-left">
+            <div class="text-sm text-gray-400 font-semibold">
+              {{ post.community.name }}
+            </div>
+            <p class="mt-2 text-gray-100">
+              {{ post.content }}
+            </p>
+            <div class="mt-4 text-sm text-gray-500">
+              Автор: {{ post.community }} | {{ post.created_at|date:"d.m.Y H:i" }}
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-left text-gray-500">Немає постів. Приєднайтесь до спільнот, щоб бачити оновлення.</p>
+    {% endif %}
 
-            <button id="subscribe-btn">Подписаться</button>
+    <div class="mt-8 text-left">
+        <button id="subscribe-btn" class="px-6 py-2 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-lg transition">
+            Підписатися
+        </button>
+    </div>
+
             <script>
             document
                 .getElementById("subscribe-btn")
@@ -40,6 +52,6 @@
                 });
         </script>
 
-
-        {% endblock %}
-</html>
+        <script src="{% static 'js/main.js' %}"></script>
+</div>
+{% endblock %}

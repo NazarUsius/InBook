@@ -1,98 +1,112 @@
 {% extends "base/_base.html" %}
 {% load mention_tag %}
+{% load widget_tweaks %}
 
 {% block content %}
-<h1>{{ community.name }}</h1>
-<p>{{ community.description }}</p>
+<div class="max-w-4xl mx-auto py-8 px-4">
+  <h1 class="text-4xl font-bold mb-4 text-stone-100">{{ community.name }}</h1>
+  <p class="mb-6 text-stone-300">{{ community.description }}</p>
 
-<p><strong>Адміністратори:</strong></p>
-<ul>
-  {% for admin in community.admins.all %}
-    <li>{{ admin.username }}</li>
-  {% endfor %}
-</ul>
+  <p class="mb-2 text-stone-200 font-semibold">Адміністратори:</p>
+  <ul class="mb-6 list-disc list-inside text-stone-300">
+    {% for admin in community.admins.all %}
+      <li>{{ admin.username }}</li>
+    {% endfor %}
+  </ul>
 
-<p><strong>Учасників:</strong> {{ community.members.count }}</p>
+  <p class="mb-6 text-stone-300"><strong>Учасників:</strong> {{ community.members.count }}</p>
 
-{% if user.is_authenticated %}
-  {% if is_member %}
-    <form method="post" action="{% url 'community_leave' community.pk %}">
-      {% csrf_token %}
-      <button type="submit">Покинути спільноту</button>
-    </form>
-  {% else %}
-    <form method="post" action="{% url 'community_join' community.pk %}">
-      {% csrf_token %}
-      <button type="submit">Приєднатися до спільноти</button>
-    </form>
+  {% if user.is_authenticated %}
+    {% if is_member %}
+      <form method="post" action="{% url 'community_leave' community.pk %}" class="mb-6">
+        {% csrf_token %}
+        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md font-semibold transition">
+          Покинути спільноту
+        </button>
+      </form>
+    {% else %}
+      <form method="post" action="{% url 'community_join' community.pk %}" class="mb-6">
+        {% csrf_token %}
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md font-semibold transition">
+          Приєднатися до спільноти
+        </button>
+      </form>
+    {% endif %}
   {% endif %}
-{% endif %}
 
-{% if is_admin %}
-  <hr>
-  <p>
-    <a href="{% url 'community_edit' community.pk %}">Редагувати</a> |
-    <a href="{% url 'community_delete' community.pk %}">Видалити</a>
-  </p>
-{% endif %}
+  {% if is_admin %}
+    <hr class="border-stone-700 mb-6">
+    <p class="text-stone-400 mb-6">
+      <a href="{% url 'community_edit' community.pk %}" class="text-indigo-400 hover:underline mr-4">Редагувати</a>
+      <a href="{% url 'community_delete' community.pk %}" class="text-red-500 hover:underline">Видалити</a>
+    </p>
+  {% endif %}
 
-<hr>
+  <hr class="border-stone-700 mb-6">
 
-<h2>Пости спільноти</h2>
+  <h2 class="text-2xl font-semibold mb-4 text-stone-100">Пости спільноти</h2>
 
-{% if posts %}
-  {% for post in posts %}
-    <div class="card mb-4">
-      <div class="card-body">
-        <h5>{{ post.title }}</h5>
-        <p>{{ post.content }}</p>
-        <small>Автор: {{ post.author.username }} | {{ post.created_at|date:"d.m.Y H:i" }}</small>
+  {% if posts %}
+    {% for post in posts %}
+      <div class="mb-8 bg-stone-800 p-6 rounded-md shadow-md">
+        <h5 class="text-xl font-semibold text-stone-100 mb-2">{{ post.title }}</h5>
+        <p class="text-stone-300 mb-3">{{ post.content }}</p>
+        <small class="text-stone-400 block mb-4">Автор: {{ post.author.username }} | {{ post.created_at|date:"d.m.Y H:i" }}</small>
 
-        <hr>
-
-        <div>
-          <strong>{{ post.title }}</strong> — {{ post.author.username }} <br>
-
-          <form method="post" action="{% url 'post_like' post.id %}" style="display:inline;">
+        <div class="flex items-center space-x-4 mb-4">
+          <form method="post" action="{% url 'post_like' post.id %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-sm {% if user in post.likes.all %}btn-success{% else %}btn-outline-success{% endif %}">
+            <button type="submit"
+              class="px-3 py-1 rounded-md font-semibold
+              {% if user in post.likes.all %}bg-green-600 hover:bg-green-700 text-white{% else %}border border-green-600 text-green-600 hover:bg-green-600 hover:text-white{% endif %} transition">
               👍 {{ post.likes.count }}
             </button>
           </form>
 
-          <form method="post" action="{% url 'post_dislike' post.id %}" style="display:inline;">
+          <form method="post" action="{% url 'post_dislike' post.id %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-sm {% if user in post.dislikes.all %}btn-danger{% else %}btn-outline-danger{% endif %}">
+            <button type="submit"
+              class="px-3 py-1 rounded-md font-semibold
+              {% if user in post.dislikes.all %}bg-red-600 hover:bg-red-700 text-white{% else %}border border-red-600 text-red-600 hover:bg-red-600 hover:text-white{% endif %} transition">
               👎 {{ post.dislikes.count }}
             </button>
           </form>
         </div>
 
-        <hr>
-        <h6>Коментарі:</h6>
-        {% for comment in post.comments.all %}
-          <div class="mb-2">
-            <strong>{{ comment.author.username }}</strong>: <p>{{ comment.content|render_mentions }}</p>
-            <small class="text-muted">({{ comment.created_at|date:"SHORT_DATETIME_FORMAT" }})</small>
-          </div>
-        {% empty %}
-          <p class="text-muted">Коментарів ще немає.</p>
-        {% endfor %}
+        <hr class="border-stone-700 mb-4">
+
+        <h6 class="text-stone-200 font-semibold mb-2">Коментарі:</h6>
+        {% if post.comments.all %}
+          {% for comment in post.comments.all %}
+            <div class="mb-3 border border-stone-700 rounded-md p-3 bg-stone-900">
+              <strong class="text-indigo-400">{{ comment.author.username }}</strong>:
+              <p class="text-stone-300 mt-1">{{ comment.content|render_mentions }}</p>
+              <small class="text-stone-500">{{ comment.created_at|date:"d.m.Y H:i" }}</small>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-stone-500 italic mb-4">Коментарів ще немає.</p>
+        {% endif %}
 
         {% if is_member %}
-          <form method="post" class="mt-2">
+          <form method="post" class="mt-4">
             {% csrf_token %}
-            {{ comment_form.as_p }}
+            {{ comment_form.content|add_class:"w-full px-4 py-2 rounded-md bg-stone-900 border border-stone-700 text-stone-100 placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" }}
             <input type="hidden" name="post_id" value="{{ post.id }}">
-            <button type="submit" class="btn btn-primary btn-sm">Додати коментар</button>
+            <button type="submit"
+              class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md font-semibold transition mt-2">
+              Додати коментар
+            </button>
           </form>
         {% endif %}
       </div>
-    </div>
-  {% endfor %}
-{% else %}
-  <p>Поки немає постів.</p>
-{% endif %}
+    {% endfor %}
+  {% else %}
+    <p class="text-stone-400 italic">Поки немає постів.</p>
+  {% endif %}
 
-<a href="{% url 'communities_list' %}">← Назад до списку</a>
+  <a href="{% url 'communities_list' %}" class="inline-block mt-6 text-indigo-400 hover:underline">
+    ← Назад до списку
+  </a>
+</div>
 {% endblock %}

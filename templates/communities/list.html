@@ -1,15 +1,29 @@
-<h1>Все сообщества</h1>
+{% extends "base/_base.html" %}
 
-<a href="{% url 'community_create' %}">Создать новое сообщество</a>
-<hr>
+{% block title %}Все сообщества{% endblock %}
 
-<ul>
-  {% for community in communities %}
-    <li>
-      <a href="{% url 'community_detail' community.pk %}">{{ community.name }}</a>
-      — {{ community.members.count }} участников
-    </li>
-  {% empty %}
-    <li>Нет сообществ</li>
-  {% endfor %}
-</ul>
+{% block content %}
+<div class="max-w-3xl mx-auto py-8 px-4">
+  <h1 class="text-4xl font-bold mb-6 text-stone-100">Все сообщества</h1>
+
+  <a href="{% url 'community_create' %}"
+     class="inline-block mb-6 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md font-semibold transition">
+    Создать новое сообщество
+  </a>
+
+  <hr class="border-stone-700 mb-6">
+
+  <ul class="space-y-4 text-stone-300">
+    {% for community in communities %}
+      <li>
+        <a href="{% url 'community_detail' community.pk %}" class="text-indigo-400 hover:underline text-lg font-medium">
+          {{ community.name }}
+        </a>
+        — {{ community.members.count }} {{ community.members.count|pluralize:"участник,участника,участников" }}
+      </li>
+    {% empty %}
+      <li class="italic text-stone-500">Нет сообществ</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

@@ -1,44 +1,61 @@
 {% extends "base/_base.html" %}
+
 {% block content %}
-<h2>Мої друзі</h2>
+<div class="max-w-3xl mx-auto py-8 px-4">
+  <h2 class="text-3xl font-semibold mb-4 text-stone-100">Мої друзі</h2>
 
-{% if friends %}
-  <ul>
-    {% for friendship in friends %}
-      {% if friendship.person_one == user %}
-        <li>{{ friendship.person_two.username }}
-          <a href="{% url 'friends_delete' friendship.person_two.id %}">Видалити</a>
+  {% if friends %}
+    <ul class="list-disc list-inside space-y-2 text-stone-300 mb-8">
+      {% for friendship in friends %}
+        <li class="flex justify-between items-center">
+          {% if friendship.person_one == user %}
+            <span>{{ friendship.person_two.username }}</span>
+            <a href="{% url 'friends_delete' friendship.person_two.id %}"
+               class="text-red-500 hover:underline ml-4">Видалити</a>
+          {% else %}
+            <span>{{ friendship.person_one.username }}</span>
+            <a href="{% url 'friends_delete' friendship.person_one.id %}"
+               class="text-red-500 hover:underline ml-4">Видалити</a>
+          {% endif %}
         </li>
-      {% else %}
-        <li>{{ friendship.person_one.username }}
-          <a href="{% url 'friends_delete' friendship.person_one.id %}">Видалити</a>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-stone-500 italic mb-8">У вас поки що немає друзів.</p>
+  {% endif %}
+
+  <h2 class="text-3xl font-semibold mb-4 text-stone-100">Вхідні запити на дружбу</h2>
+  {% if requests %}
+    <ul class="list-disc list-inside space-y-2 text-stone-300 mb-8">
+      {% for req in requests %}
+        <li class="flex items-center justify-between">
+          <span>{{ req.person_one.username }}</span>
+          <div class="space-x-3">
+            <a href="{% url 'friends_request_accept' req.person_one.id %}"
+               class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md transition">
+               Прийняти
+            </a>
+            <a href="{% url 'friends_request_decline' req.person_one.id %}"
+               class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md transition">
+               Відхилити
+            </a>
+          </div>
         </li>
-      {% endif %}
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>У вас поки що немає друзів.</p>
-{% endif %}
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-stone-500 italic mb-8">Немає вхідних запитів</p>
+  {% endif %}
 
-<h2>Вхідні запити на дружбу</h2>
-<ul>
-  {% for req in requests %}
-    <li>{{ req.person_one.username }}
-      <a href="{% url 'friends_request_accept' req.person_one.id %}">Прийняти</a>
-      <a href="{% url 'friends_request_decline' req.person_one.id %}">Відхилити</a>
-    </li>
-  {% empty %}
-    <li>Немає вхідних запитів</li>
-  {% endfor %}
-</ul>
-
-<h2>Відправлені запити</h2>
-<ul>
-  {% for req in requests %}
-    <li>{{ req.person_two.username }} (очікує підтвердження)</li>
-  {% empty %}
-    <li>Ви не надсилали запитів</li>
-  {% endfor %}
-</ul>
-
+  <h2 class="text-3xl font-semibold mb-4 text-stone-100">Відправлені запити</h2>
+  {% if sent_requests %}
+    <ul class="list-disc list-inside space-y-2 text-stone-300">
+      {% for req in sent_requests %}
+        <li>{{ req.person_two.username }} (очікує підтвердження)</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-stone-500 italic">Ви не надсилали запитів</p>
+  {% endif %}
+</div>
 {% endblock %}

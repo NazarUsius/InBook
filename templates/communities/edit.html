@@ -1,9 +1,40 @@
-<h1>Редактировать сообщество: {{ form.instance.name }}</h1>
+{% extends "base/_base.html" %}
+{% load widget_tweaks %}
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Сохранить изменения</button>
-</form>
+{% block title %}Редактировать сообщество: {{ form.instance.name }}{% endblock %}
 
-<a href="{% url 'community_detail' form.instance.pk %}">Назад</a>
+{% block content %}
+<div class="max-w-xl mx-auto py-8 px-4">
+  <h1 class="text-3xl font-semibold mb-6 text-stone-100">Редактировать сообщество: {{ form.instance.name }}</h1>
+
+  <form method="post" class="space-y-6 bg-stone-800 p-6 rounded-md shadow-md">
+    {% csrf_token %}
+    {% for field in form %}
+      <div>
+        <label for="{{ field.id_for_label }}" class="block mb-1 text-stone-200 font-medium">
+          {{ field.label }}
+          {% if field.field.required %}
+            <span class="text-red-500">*</span>
+          {% endif %}
+        </label>
+        {{ field|add_class:"w-full px-4 py-2 rounded-md bg-stone-900 border border-stone-700 text-stone-100 placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" }}
+        {% if field.help_text %}
+          <p class="text-stone-400 text-sm mt-1">{{ field.help_text }}</p>
+        {% endif %}
+        {% for error in field.errors %}
+          <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <button type="submit"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-md font-semibold transition">
+      Сохранить изменения
+    </button>
+  </form>
+
+  <a href="{% url 'community_detail' form.instance.pk %}" class="inline-block mt-6 text-indigo-400 hover:underline">
+    Назад
+  </a>
+</div>
+{% endblock %}

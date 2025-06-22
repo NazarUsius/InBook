@@ -1,7 +1,59 @@
-<form method="POST">
+{% extends "base/_base.html" %}
+{% load widget_tweaks %}
+{% load static %}
 
+{% block head %}
+    <meta charset="UTF-8">
+    <title>Вхід</title>
+    <style>
+        html, body {
+            height: 100%;
+            overflow: hidden; /* Блокируем прокрутку */
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="h-screen text-white flex items-center justify-center">
+    <div class="w-full max-w-md bg-neutral-900 p-8 rounded-xl shadow-xl">
+        <h2 class="text-3xl font-bold mb-8 text-center">Вхід у систему</h2>
+
+        <form method="POST" class="space-y-6">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">SS</button>
 
+    <!-- Username -->
+    <div>
+        <label for="{{ form.username.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-300">
+            Username
+        </label>
+        {{ form.username|add_class:"w-full px-4 py-2 bg-neutral-800 border border-neutral-700 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 transition" }}
+        {% if form.username.errors %}
+            <p class="text-sm text-red-500 mt-1">{{ form.username.errors.0 }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Password -->
+    <div>
+        <label for="{{ form.password.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-300">
+            Password
+        </label>
+        {{ form.password|add_class:"w-full px-4 py-2 bg-neutral-800 border border-neutral-700 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 transition" }}
+        {% if form.password.errors %}
+            <p class="text-sm text-red-500 mt-1">{{ form.password.errors.0 }}</p>
+        {% endif %}
+    </div>
+
+    <button type="submit"
+        class="w-full bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+        Увійти
+    </button>
 </form>
+
+
+        <p class="text-center text-sm text-gray-500 mt-6">
+            Ще не маєте акаунту?
+            <a href="{% url 'register' %}" class="text-blue-400 hover:underline">Зареєструватися</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
