@@ -32,9 +32,9 @@ VAPID_PRIVATE_KEY = os.getenv("VAPID_PRIVATE_KEY")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['.onrender.com']
+ALLOWED_HOSTS = []
 
 LOGIN_REDIRECT_URL = 'index'
 
@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accounts',
-    'groups',
     'friends',
     'notifications',
     'chat',
@@ -149,7 +148,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",  # если у тебя папка static в корне проекта
+    BASE_DIR / "static",
 ]
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
