@@ -102,7 +102,7 @@
         {% if post.comments.all %}
           {% for comment in post.comments.all %}
             <div class="mb-3 border border-stone-700 rounded-md p-3 bg-stone-900">
-              <strong class="text-indigo-400">{{ comment.author.username }}</strong>:
+                <a href="{% url 'profile' comment.author.id %}"><strong class="text-indigo-400">{{ comment.author.username }}</strong></a>
               <p class="text-stone-300 mt-1">{{ comment.content|render_mentions }}</p>
               <small class="text-stone-500">{{ comment.created_at|date:"d.m.Y H:i" }}</small>
             </div>
