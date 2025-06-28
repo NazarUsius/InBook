@@ -28,7 +28,14 @@
                 class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-md font-semibold transition">
           Підписатися
         </button>
+         <a href="{% url 'friends_request' profile_user.id %}"
+           class="bg-yellow-600 hover:bg-yellow-700 text-white px-5 py-2 rounded-md font-semibold transition">
+            Відправити запит на дружбу
+        </a>
       </form>
+
+
+
     {% endif %}
   {% endif %}
 </div>
