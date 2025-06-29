@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from .forms import CustomCreationForm
 
 
@@ -13,3 +13,8 @@ def RegisterView(request):
             if request.user.is_authenticated:
                 return redirect("index")
     return render(request, 'accounts/register.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('index')

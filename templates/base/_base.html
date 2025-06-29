@@ -11,16 +11,20 @@
 
 </head>
 <body class="bg-stone-900 text-stone-200">
-    <header class="bg-stone-800 shadow-md p-4">
-        <div class="container mx-auto">
-            <h1 class="text-2xl font-bold">Мой сайт</h1>
-        </div>
-    </header>
+
+{% include 'base/_header.html' %}
 
     <main class="container mx-auto mt-6 px-4">
+        <script src="{% static 'js/main.js' %}"></script>
         {% block content %}
-        <!-- Контент страницы -->
+
         {% endblock %}
+        <div id="notify-banner" class="hidden fixed bottom-4 right-4 bg-stone-900 text-white p-4 rounded-md shadow-lg z-50 border border-stone-700">
+          <p class="mb-2">Хочете отримувати сповіщення про нові повідомлення?</p>
+          <button id="notify-yes" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded font-semibold mr-2">Так</button>
+          <button id="notify-no" class="bg-stone-600 hover:bg-stone-700 text-white px-4 py-2 rounded font-semibold">Ні</button>
+        </div>
+
     </main>
 
     {% block scripts %}

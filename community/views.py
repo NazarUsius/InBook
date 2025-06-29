@@ -8,7 +8,7 @@ from django.dispatch import receiver
 from django.utils.safestring import mark_safe
 
 from notifications.utils import send_push_notification
-from .forms import CommunityForm, CommentForm
+from .forms import CommunityForm, CommentForm, PostForm
 from .models import Community, Post, Comment
 
 User = get_user_model()
@@ -86,26 +86,37 @@ def community_detail(request, pk):
     is_admin = request.user in community.admins.all()
     posts = Post.objects.filter(community=community).prefetch_related('comments')
 
-    if request.method == 'POST':
-        form = CommentForm(request.POST)
+    post_form = None
+    if is_admin:
+        if request.method == 'POST' and 'create_post' in request.POST:
+            post_form = PostForm(request.POST, request.FILES)
+            if post_form.is_valid():
+                post = post_form.save(commit=False)
+                post.community = community
+                post.save()
+                return redirect('community_detail', pk=community.pk)
+        else:
+            post_form = PostForm()
+
+    comment_form = CommentForm()
+    if request.method == 'POST' and 'post_id' in request.POST:
+        comment_form = CommentForm(request.POST)
         post_id = request.POST.get('post_id')
         post = get_object_or_404(Post, id=post_id)
-
-        if form.is_valid():
-            comment = form.save(commit=False)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
             comment.author = request.user
             comment.post = post
             comment.save()
             return redirect('community_detail', pk=community.pk)
-    else:
-        form = CommentForm()
 
     return render(request, "communities/detail.html", {
         "community": community,
         "is_member": is_member,
         "is_admin": is_admin,
         "posts": posts,
-        "comment_form": form,
+        "comment_form": comment_form,
+        "post_form": post_form,
     })
 
 

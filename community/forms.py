@@ -1,6 +1,6 @@
 from django import forms
 
-from community.models import Community, Comment
+from community.models import Community, Comment, Post
 
 
 class CommunityForm(forms.ModelForm):
@@ -18,3 +18,9 @@ class CommentForm(forms.ModelForm):
         widgets = {
             'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Напишіть коментар...'}),
         }
+
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title', 'content', 'media']
