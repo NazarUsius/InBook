@@ -4,9 +4,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("Service Worker зарегистрирован:", registration);
 
     console.log("Notification.permission:", Notification.permission);
+    console.log(window.location.pathname)
 
-    if (Notification.permission === "default") {
-      // Показываем баннер с задержкой 3 секунды
+    if (window.location.pathname === '/accounts/login/' || window.location.pathname === '/accounts/register') {
+      console.log("Пользователь на экране логина/регистрации, пропускаю сообщение")
+    } else {
+       if (Notification.permission === "default") {
       setTimeout(() => {
         const banner = document.getElementById("notify-banner");
         if (!banner) {
@@ -62,6 +65,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     } else {
       console.log("Пользователь запретил уведомления");
     }
+    }
+
+
   } catch (err) {
     console.error("Ошибка регистрации Service Worker:", err);
   }

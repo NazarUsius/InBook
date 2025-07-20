@@ -73,7 +73,7 @@
         <h5 class="text-xl font-semibold text-stone-100 mb-2">{{ post.title }}</h5>
         <p class="text-stone-300 mb-3">{{ post.content }}</p>
         <small class="text-stone-400 block mb-4">
-          Автор: {{ post.author.username }} | {{ post.created_at|date:"d.m.Y H:i" }}
+          {{ post.created_at|date:"d.m.Y H:i" }}
         </small>
 
         <div class="flex items-center space-x-4 mb-4">

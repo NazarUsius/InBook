@@ -28,6 +28,7 @@ def community_create(request):
             community = form.save(commit=False)
             community.save()
             community.admins.add(request.user)
+            community.members.add(request.user)
             return redirect('communities_list')
 
     return render(request, "communities/create.html", {"form": form})

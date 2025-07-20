@@ -29,7 +29,7 @@
     <ul class="list-disc list-inside space-y-2 text-stone-300 mb-8">
       {% for req in requests %}
         <li class="flex items-center justify-between">
-          <span>{{ req.person_one.username }}</span>
+          <span>{{ req.person_two.username }}</span>
           <div class="space-x-3">
             <a href="{% url 'friends_request_accept' req.person_one.id %}"
                class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md transition">
@@ -48,14 +48,16 @@
   {% endif %}
 
   <h2 class="text-3xl font-semibold mb-4 text-stone-100">Відправлені запити</h2>
-  {% if sent_requests %}
-    <ul class="list-disc list-inside space-y-2 text-stone-300">
-      {% for req in sent_requests %}
-        <li>{{ req.person_two.username }} (очікує підтвердження)</li>
-      {% endfor %}
+  {% if requests %}
+    <ul class="list-disc list-inside space-y-2 text-stone-300 mb-8">
+      {% for req in requests %}
+            <li class="flex items-center justify-between">
+              <span>{{ req.person_two.username }} (очікує підтвердження)</span>
+            </li>
+          {% endfor %}
     </ul>
-  {% else %}
-    <p class="text-stone-500 italic">Ви не надсилали запитів</p>
-  {% endif %}
+    {% else %}
+        <p class="text-stone-500 italic mb-8">Немає відправлених запитів</p>
+    {% endif %}
 </div>
 {% endblock %}
